@@ -17,6 +17,21 @@ async function signup(req, res) {
     }
 }
 
+async function signin(req, res) {
+    try {
+        const { email, password } = req.body;
+
+        const user = await UserService.signin({ email, password });
+        SuccessResponse.data = user;
+
+        return res.status(StatusCodes.CREATED).json(SuccessResponse);
+    } catch (error) {
+        ErrorResponse.error = error;
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+    }
+}
+
 module.exports = {
     signup,
+    signin,
 }
