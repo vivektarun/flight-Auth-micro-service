@@ -8,4 +8,5 @@ const router = express.Router();
 router.post('/signup', AuthRequestMiddlewares.validateCreateRequest, UserController.signup);
 router.post('/signin', AuthRequestMiddlewares.validateCreateRequest, UserController.signin);
 
+
 module.exports = router;
