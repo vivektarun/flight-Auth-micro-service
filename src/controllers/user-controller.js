@@ -31,7 +31,23 @@ async function signin(req, res) {
     }
 }
 
+async function addroleToUser(req, res) {
+    try {
+        const {role, id} = req.body;
+
+        const user = await UserService.addroleToUser({role, id});
+
+        SuccessResponse.data = user;
+        return res.status(StatusCodes.CREATED).json(SuccessResponse);
+    } catch (error) {
+        ErrorResponse.error = error;
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+    }
+}
+
 module.exports = {
     signup,
     signin,
+    addroleToUser,
+
 }

@@ -82,9 +82,32 @@ async function isAunthticated(token) {
     }
 }
 
+async function addroleToUser(data) {
+    try {
+        const user = await userRepo.get(data.id);
+
+        if(!user) {
+            throw new AppError('No user found for the provided email', StatusCodes.NOT_FOUND);
+        }
+
+        const role = await roleRepo.getRoleByName(data.role);
+
+        if(!role) {
+            throw new AppError('No user found for the provided role', StatusCodes.NOT_FOUND);
+        }
+        user.addRole(role);
+        return user;
+    } catch (error) {
+        if(error instanceof AppError) throw error;
+        console.log(error);
+        throw new AppError('Something went wrong', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     createUser,
     signin,
     isAunthticated,
+    addroleToUser,
 
 }
