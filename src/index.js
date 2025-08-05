@@ -3,7 +3,6 @@ const { ServerConfig } = require('./config');
 const apiRoutes = require('./routes'); // By default index.js in required.
 const ratelimit = require('express-rate-limit');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const { ServerConfig } = require('./config');
 
 const app = express();
 
