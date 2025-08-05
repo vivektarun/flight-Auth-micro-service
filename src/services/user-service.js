@@ -104,10 +104,33 @@ async function addroleToUser(data) {
     }
 }
 
+async function isAdmin(id) {
+    try {
+        const user = await userRepo.get(id);
+
+        if(!user) {
+            throw new AppError('No user found for the provided email', StatusCodes.NOT_FOUND);
+        }
+
+        const adminRole = await roleRepo.getRoleByName(Enums.USER_ROLE_ENUMS.ADMIN);
+
+        if(!adminRole) {
+            throw new AppError('No user found for the provided role', StatusCodes.NOT_FOUND);
+        }
+
+        return user.hasRole(adminRole);
+    } catch (error) {
+        if(error instanceof AppError) throw error;
+        console.log(error);
+        throw new AppError('Something went wrong', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     createUser,
     signin,
     isAunthticated,
     addroleToUser,
+    isAdmin,
 
 }
