@@ -16,13 +16,37 @@ app.use(express.urlencoded({extended : true}));
 app.use(express.text());
 app.use(limiter);
 
-app.use('/flightService', createProxyMiddleware({
+
+const authenticateRequest = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Authorization header missing' });
+    }
+
+    const token = authHeader.split(' ')[1]; // Expect "Bearer <token>"
+
+    if (!token) {
+        return res.status(401).json({ error: 'Token missing' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, ServerConfig.JWT_SECRET); // Your secret key from config
+        req.user = decoded; // Attach decoded payload to request
+        next();
+    } catch (err) {
+        return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+};
+
+
+app.use('/flightService', authenticateRequest, createProxyMiddleware({
     target: ServerConfig.FLIGHT_SERVICE, 
     changeOrigin: true,
     pathRewrite: {'^/flightsService' : '/'}
 }));
 
-app.use('/bookingService', createProxyMiddleware({
+app.use('/bookingService', authenticateRequest, createProxyMiddleware({
     target: ServerConfig.BOOKING_SERVICE, 
     changeOrigin: true,
     pathRewrite: {'^/bookingService': '/'}
