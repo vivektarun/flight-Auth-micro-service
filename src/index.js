@@ -3,8 +3,14 @@ const { ServerConfig } = require('./config');
 const apiRoutes = require('./routes'); // By default index.js in required.
 const ratelimit = require('express-rate-limit');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const cors = require('cors');
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5173', // your frontend URL
+  credentials: true
+}));
 
 const limiter = ratelimit.rateLimit({
     windowMs: 2 * 60 * 1000, // 2 min
